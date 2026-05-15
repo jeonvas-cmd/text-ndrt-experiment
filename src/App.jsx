@@ -66,7 +66,7 @@ export default function App() {
     case PHASE.DRIVING:
       return (
         <DrivingScreen
-          durationSec={drivingSec}
+          durationSec={state.isPractice ? 10 : drivingSec}
           onComplete={actions.goCueOrQuiz}
         />
       )

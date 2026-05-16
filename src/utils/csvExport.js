@@ -24,7 +24,7 @@ function triggerDownload(csvString, filename) {
   URL.revokeObjectURL(url)
 }
 
-// trial 한 건 → 단일 CSV 문자열 (메타 + 문항 4행 + 요약)
+// trial 한 건 → 단일 CSV 문자열 (메타 + 문항 N행 + 요약)
 export function generateTrialCSV(trial) {
   const meta = [
     ['# section', 'meta'],
@@ -44,9 +44,10 @@ export function generateTrialCSV(trial) {
     [],
   ]
 
-  const quizHeader = ['quiz_index', 'question', 'correct_answer', 'given_answer', 'correct', 'response_ms']
+  const quizHeader = ['quiz_index', 'quiz_type', 'question', 'correct_answer', 'given_answer', 'correct', 'response_ms']
   const quizRows = (trial.quiz_results || []).map((q, i) => [
     i + 1,
+    q.type ?? '',
     q.question,
     q.correct_answer,
     q.given_answer ?? '',
@@ -57,7 +58,7 @@ export function generateTrialCSV(trial) {
   return toLines([...meta, quizHeader, ...quizRows])
 }
 
-// 참가자 통합본 CSV: 1행 = trial 1개 × 1문항. 참가자당 12행(본 trial 3 × 4문항). practice 포함 옵션은 단순화 위해 항상 포함.
+// 참가자 통합본 CSV: 1행 = trial 1개 × 1문항. 본 trial 3 × 12문항 = 36행 + practice 4행. practice 포함 옵션은 단순화 위해 항상 포함.
 const SUMMARY_HEADER = [
   'participant_id',
   'trial_index',
@@ -72,6 +73,7 @@ const SUMMARY_HEADER = [
   'quiz_total_ms',
   'ease_of_recognition',
   'quiz_index',
+  'quiz_type',
   'question',
   'correct_answer',
   'given_answer',
@@ -101,6 +103,7 @@ export function generateSummaryCSV(trials) {
       rows.push([
         ...base,
         i + 1,
+        q.type ?? '',
         q.question,
         q.correct_answer,
         q.given_answer ?? '',

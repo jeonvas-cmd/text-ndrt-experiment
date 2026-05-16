@@ -110,6 +110,7 @@ function reducer(state, action) {
       const prevTs = idx === 0 ? state.quizStartMs : state.quizResults[idx - 1].__endTs
       const responseMs = action.ts - prevTs
       const result = {
+        type: q.type,
         question: q.question,
         correct_answer: q.answer,
         given_answer: action.given,
